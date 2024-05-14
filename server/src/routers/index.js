@@ -1,4 +1,4 @@
-const express = require('express');
+const rootRouter = require('express').Router();
 const basicMiddlewares = require('../middlewares/basicMiddlewares');
 const hashPass = require('../middlewares/hashPassMiddle');
 const userController = require('../controllers/userController');
@@ -7,175 +7,137 @@ const checkToken = require('../middlewares/checkToken');
 const validators = require('../middlewares/validators');
 const chatController = require('../controllers/chatController');
 const upload = require('../utils/fileUpload');
-const router = express.Router();
+const contestRouter = require('./contestRouter');
 
-router.post(
+rootRouter.use('/contests', checkToken.checkToken, contestRouter);
+
+rootRouter.post(
   '/registration',
   validators.validateRegistrationData,
   hashPass,
-  userController.registration,
+  userController.registration
 );
 
-router.post(
-  '/login',
-  validators.validateLogin,
-  userController.login,
-);
+// rootRouter.use(checkToken.checkToken);
 
-router.post(
+rootRouter.post('/login', validators.validateLogin, userController.login);
+
+rootRouter.post(
   '/dataForContest',
   checkToken.checkToken,
-  contestController.dataForContest,
+  contestController.dataForContest
 );
 
-router.post(
+rootRouter.post(
   '/pay',
   checkToken.checkToken,
   basicMiddlewares.onlyForCustomer,
   upload.uploadContestFiles,
   basicMiddlewares.parseBody,
   validators.validateContestCreation,
-  userController.payment,
+  userController.payment
 );
 
-router.post(
-  '/getCustomersContests',
-  checkToken.checkToken,
-  contestController.getCustomersContests,
-);
+rootRouter.post('/getUser', checkToken.checkAuth);
 
-router.get(
-  '/getContestById',
-  checkToken.checkToken,
-  basicMiddlewares.canGetContest,
-  contestController.getContestById,
-);
-
-router.post(
-  '/getAllContests',
-  checkToken.checkToken,
-  basicMiddlewares.onlyForCreative,
-  contestController.getContests,
-);
-
-router.post(
-  '/getUser',
-  checkToken.checkAuth,
-);
-
-router.get(
+rootRouter.get(
   '/downloadFile/:fileName',
   checkToken.checkToken,
-  contestController.downloadFile,
+  contestController.downloadFile
 );
 
-router.post(
-  '/updateContest',
-  checkToken.checkToken,
-  upload.updateContestFile,
-  contestController.updateContest,
-);
-
-router.post(
+rootRouter.post(
   '/setNewOffer',
   checkToken.checkToken,
   upload.uploadLogoFiles,
   basicMiddlewares.canSendOffer,
-  contestController.setNewOffer,
+  contestController.setNewOffer
 );
 
-router.post(
+rootRouter.post(
   '/setOfferStatus',
   checkToken.checkToken,
   basicMiddlewares.onlyForCustomerWhoCreateContest,
-  contestController.setOfferStatus,
+  contestController.setOfferStatus
 );
 
-router.post(
+rootRouter.post(
   '/changeMark',
   checkToken.checkToken,
   basicMiddlewares.onlyForCustomer,
-  userController.changeMark,
+  userController.changeMark
 );
 
-router.post(
+rootRouter.post(
   '/updateUser',
   checkToken.checkToken,
   upload.uploadAvatar,
-  userController.updateUser,
+  userController.updateUser
 );
 
-router.post(
+rootRouter.post(
   '/cashout',
   checkToken.checkToken,
   basicMiddlewares.onlyForCreative,
-  userController.cashout,
+  userController.cashout
 );
 
-router.post(
+rootRouter.post(
   '/newMessage',
   checkToken.checkToken,
-  chatController.addMessage,
+  chatController.addMessage
 );
 
-router.post(
-  '/getChat',
-  checkToken.checkToken,
-  chatController.getChat,
-);
+rootRouter.post('/getChat', checkToken.checkToken, chatController.getChat);
 
-router.post(
+rootRouter.post(
   '/getPreview',
   checkToken.checkToken,
-  chatController.getPreview,
+  chatController.getPreview
 );
 
-router.post(
-  '/blackList',
-  checkToken.checkToken,
-  chatController.blackList,
-);
+rootRouter.post('/blackList', checkToken.checkToken, chatController.blackList);
 
-router.post(
+rootRouter.post(
   '/favorite',
   checkToken.checkToken,
-  chatController.favoriteChat,
+  chatController.favoriteChat
 );
 
-router.post(
+rootRouter.post(
   '/createCatalog',
   checkToken.checkToken,
-  chatController.createCatalog,
+  chatController.createCatalog
 );
 
-router.post(
+rootRouter.post(
   '/updateNameCatalog',
   checkToken.checkToken,
-  chatController.updateNameCatalog,
+  chatController.updateNameCatalog
 );
 
-router.post(
+rootRouter.post(
   '/addNewChatToCatalog',
   checkToken.checkToken,
-  chatController.addNewChatToCatalog,
+  chatController.addNewChatToCatalog
 );
 
-router.post(
+rootRouter.post(
   '/removeChatFromCatalog',
   checkToken.checkToken,
-  chatController.removeChatFromCatalog,
+  chatController.removeChatFromCatalog
 );
 
-router.post(
+rootRouter.post(
   '/deleteCatalog',
   checkToken.checkToken,
-  chatController.deleteCatalog,
+  chatController.deleteCatalog
 );
 
-router.post(
+rootRouter.post(
   '/getCatalogs',
   checkToken.checkToken,
-  chatController.getCatalogs,
+  chatController.getCatalogs
 );
 
-module.exports = router;
+module.exports = rootRouter;
