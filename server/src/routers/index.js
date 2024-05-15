@@ -5,9 +5,9 @@ const userController = require('../controllers/userController');
 const contestController = require('../controllers/contestController');
 const checkToken = require('../middlewares/checkToken');
 const validators = require('../middlewares/validators');
-const chatController = require('../controllers/chatController');
 const upload = require('../utils/fileUpload');
 const contestRouter = require('./contestRouter');
+const chatRouter = require('./chatRouter');
 
 rootRouter.post(
   '/registration',
@@ -20,8 +20,8 @@ rootRouter.post('/getUser', checkToken.checkAuth);
 
 rootRouter.use(checkToken.checkToken);
 rootRouter.use('/contests', contestRouter);
+rootRouter.use('/chats', chatRouter);
 
-rootRouter.post('/dataForContest', contestController.dataForContest);
 rootRouter.post(
   '/pay',
   basicMiddlewares.onlyForCustomer,
@@ -30,6 +30,8 @@ rootRouter.post(
   validators.validateContestCreation,
   userController.payment
 );
+
+rootRouter.post('/dataForContest', contestController.dataForContest);
 rootRouter.get('/downloadFile/:fileName', contestController.downloadFile);
 rootRouter.post(
   '/setNewOffer',
@@ -42,6 +44,7 @@ rootRouter.post(
   basicMiddlewares.onlyForCustomerWhoCreateContest,
   contestController.setOfferStatus
 );
+
 rootRouter.post(
   '/changeMark',
   basicMiddlewares.onlyForCustomer,
@@ -53,16 +56,5 @@ rootRouter.post(
   basicMiddlewares.onlyForCreative,
   userController.cashout
 );
-rootRouter.post('/newMessage', chatController.addMessage);
-rootRouter.post('/getChat', chatController.getChat);
-rootRouter.post('/getPreview', chatController.getPreview);
-rootRouter.post('/blackList', chatController.blackList);
-rootRouter.post('/favorite', chatController.favoriteChat);
-rootRouter.post('/createCatalog', chatController.createCatalog);
-rootRouter.post('/updateNameCatalog', chatController.updateNameCatalog);
-rootRouter.post('/addNewChatToCatalog', chatController.addNewChatToCatalog);
-rootRouter.post('/removeChatFromCatalog', chatController.removeChatFromCatalog);
-rootRouter.post('/deleteCatalog', chatController.deleteCatalog);
-rootRouter.post('/getCatalogs', chatController.getCatalogs);
 
 module.exports = rootRouter;

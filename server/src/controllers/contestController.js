@@ -90,11 +90,10 @@ module.exports.getContestById = async (req, res, next) => {
     //   delete o.Rating;
     // });
 
-    contestInfo.Offers = contestInfo.Offers.map((o) => {
-      const { Rating, ...rest } = o;
-      const newOffer = { mark: Rating.mark, ...rest };
-      return newOffer;
-    });
+    contestInfo.Offers = contestInfo.Offers.map(({ Rating, ...rest }) => ({
+      mark: Rating?.mark,
+      ...rest,
+    }));
 
     res.send(contestInfo);
   } catch (e) {
@@ -288,11 +287,7 @@ module.exports.getCustomersContests = (req, res, next) => {
       contests.forEach(
         (c) => (c.dataValues.count = c.dataValues.Offers.length)
       );
-      let haveMore = true;
-      if (contests.length === 0) {
-        haveMore = false;
-      }
-      res.send({ contests, haveMore });
+      res.send({ contests, haveMore: contests.length !== 0 });
     })
     .catch((err) => next(new ServerError(err)));
 };
@@ -303,12 +298,9 @@ module.exports.getContests = (req, res, next) => {
     query: { limit, offset },
     tokenData: { userId },
   } = req;
-  const { where, order } = UtilFunctions.createWhereForAllContests(
-    typeIndex,
-    contestId,
-    industry,
-    awardSort
-  );
+
+  const data = [typeIndex, contestId, industry, awardSort];
+  const { where, order } = UtilFunctions.createWhereForAllContests(...data);
   db.Contests.findAll({
     where,
     order,
