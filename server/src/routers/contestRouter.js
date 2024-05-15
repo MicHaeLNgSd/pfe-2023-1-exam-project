@@ -11,6 +11,11 @@ contestRouter.get(
 );
 
 contestRouter.get(
+  '/customers/:customerId',
+  contestController.getCustomersContests
+);
+
+contestRouter.get(
   '/:contestId',
   basicMiddlewares.canGetContest,
   contestController.getContestById
@@ -20,11 +25,6 @@ contestRouter.put(
   '/:contestId',
   upload.updateContestFile,
   contestController.updateContest
-);
-
-contestRouter.get(
-  '/customers/:customerId',
-  contestController.getCustomersContests
 );
 
 module.exports = contestRouter;
