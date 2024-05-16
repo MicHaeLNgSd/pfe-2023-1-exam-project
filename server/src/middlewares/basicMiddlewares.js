@@ -5,28 +5,35 @@ const ServerError = require('../errors/ServerError');
 const CONSTANTS = require('../constants');
 
 module.exports.parseBody = (req, res, next) => {
-  req.body.contests = JSON.parse(req.body.contests);
-  for (let i = 0; i < req.body.contests.length; i++) {
-    if (req.body.contests[i].haveFile) {
-      const file = req.files.splice(0, 1);
-      req.body.contests[i].fileName = file[0].filename;
-      req.body.contests[i].originalFileName = file[0].originalname;
+  contests = JSON.parse(req.body.contests);
+  contests.forEach((c) => {
+    if (c.haveFile) {
+      const file = req.files.shift();
+      c.fileName = file.filename;
+      c.originalFileName = file.originalname;
     }
-  }
+  });
+
+  req.body.contests = contests;
   next();
 };
 
 module.exports.canGetContest = async (req, res, next) => {
+  const {
+    tokenData: { role, userId },
+    headers: { contestid },
+  } = req;
+
   let result = null;
   try {
-    if (req.tokenData.role === CONSTANTS.CUSTOMER) {
+    if (role === CONSTANTS.CUSTOMER) {
       result = await bd.Contests.findOne({
-        where: { id: req.headers.contestid, userId: req.tokenData.userId },
+        where: { id: contestid, userId },
       });
-    } else if (req.tokenData.role === CONSTANTS.CREATOR) {
+    } else if (role === CONSTANTS.CREATOR) {
       result = await bd.Contests.findOne({
         where: {
-          id: req.headers.contestid,
+          id: contestid,
           status: {
             [bd.Sequelize.Op.or]: [
               CONSTANTS.CONTEST_STATUS_ACTIVE,
