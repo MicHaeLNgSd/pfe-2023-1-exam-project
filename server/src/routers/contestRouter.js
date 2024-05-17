@@ -10,10 +10,8 @@ contestRouter.get(
   contestController.getContests
 );
 
-contestRouter.get(
-  '/customers/:customerId',
-  contestController.getCustomersContests
-);
+//take id from tokent
+contestRouter.get('/customers', contestController.getCustomersContests);
 
 contestRouter.get(
   '/:contestId',

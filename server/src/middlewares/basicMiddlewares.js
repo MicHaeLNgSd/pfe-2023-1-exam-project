@@ -21,19 +21,19 @@ module.exports.parseBody = (req, res, next) => {
 module.exports.canGetContest = async (req, res, next) => {
   const {
     tokenData: { role, userId },
-    headers: { contestid },
+    params: { contestId },
   } = req;
 
   let result = null;
   try {
     if (role === CONSTANTS.CUSTOMER) {
       result = await bd.Contests.findOne({
-        where: { id: contestid, userId },
+        where: { id: contestId, userId },
       });
     } else if (role === CONSTANTS.CREATOR) {
       result = await bd.Contests.findOne({
         where: {
-          id: contestid,
+          id: contestId,
           status: {
             [bd.Sequelize.Op.or]: [
               CONSTANTS.CONTEST_STATUS_ACTIVE,

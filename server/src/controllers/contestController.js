@@ -5,6 +5,7 @@ const userQueries = require('./queries/userQueries');
 const controller = require('../socketInit');
 const UtilFunctions = require('../utils/functions');
 const CONSTANTS = require('../constants');
+const { query } = require('express');
 
 module.exports.dataForContest = async (req, res, next) => {
   const response = {};
@@ -43,12 +44,12 @@ module.exports.dataForContest = async (req, res, next) => {
 module.exports.getContestById = async (req, res, next) => {
   try {
     const {
-      headers: { contestid },
-      tokenData: { role: tokenRole, userId },
+      params: { contestId },
+      tokenData: { role, userId },
     } = req;
 
     let contestInfo = await db.Contests.findOne({
-      where: { id: contestid },
+      where: { id: contestId },
       order: [[db.Offers, 'id', 'asc']],
       include: [
         {
@@ -61,7 +62,7 @@ module.exports.getContestById = async (req, res, next) => {
         {
           model: db.Offers,
           required: false,
-          where: tokenRole === CONSTANTS.CREATOR ? { userId } : {},
+          where: role === CONSTANTS.CREATOR ? { userId } : {},
           attributes: { exclude: ['userId', 'contestId'] },
           include: [
             {
@@ -108,18 +109,20 @@ module.exports.downloadFile = async (req, res, next) => {
 
 module.exports.updateContest = async (req, res, next) => {
   const {
+    params: { contestId },
     file: { filename, originalname },
-    body: { contestId },
+    tokenData: { userId },
   } = req;
+
   if (file) {
     req.body.filename = filename;
     req.body.originalname = originalname;
   }
-  // delete req.body.contestId;
+
   try {
     const updatedContest = await contestQueries.updateContest(req.body, {
       id: contestId,
-      userId: req.tokenData.userId,
+      userId,
     });
     res.send(updatedContest);
   } catch (err) {
@@ -265,9 +268,8 @@ module.exports.setOfferStatus = async (req, res, next) => {
 
 module.exports.getCustomersContests = (req, res, next) => {
   const {
-    headers: { status },
     tokenData: { userId },
-    query: { limit, offset },
+    query: { limit, offset, status },
   } = req;
 
   db.Contests.findAll({
@@ -294,11 +296,19 @@ module.exports.getCustomersContests = (req, res, next) => {
 
 module.exports.getContests = (req, res, next) => {
   const {
-    body: { typeIndex, contestId, industry, awardSort, ownEntries },
-    query: { limit, offset },
     tokenData: { userId },
+    query: {
+      limit,
+      offset,
+      typeIndex,
+      contestId,
+      industry,
+      awardSort,
+      ownEntries,
+    },
   } = req;
 
+  const isOwnEntries = ownEntries === 'true';
   const data = [typeIndex, contestId, industry, awardSort];
   const { where, order } = UtilFunctions.createWhereForAllContests(...data);
   db.Contests.findAll({
@@ -309,8 +319,8 @@ module.exports.getContests = (req, res, next) => {
     include: [
       {
         model: db.Offers,
-        required: ownEntries,
-        where: ownEntries ? { userId } : {},
+        required: isOwnEntries,
+        where: isOwnEntries ? { userId } : {},
         attributes: ['id'],
       },
     ],

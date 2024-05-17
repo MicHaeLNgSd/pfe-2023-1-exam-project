@@ -2,21 +2,37 @@ import http from '../interceptor';
 
 //*CONTEST
 export const getCustomersContests = (data) =>
-  http.get(`contests/customers/?${data.limit}&${data.offset}`, {
-    headers: {
+  http.get(`contests/customers`, {
+    params: {
+      limit: data.limit,
+      offset: data.offset,
       status: data.contestStatus,
     },
   });
-// typeIndex, contestId, industry, awardSort, ownEntries,
-export const getActiveContests = ({ offset, limit, ...restData }) =>
-  http.get(`contests/?${limit}&${offset}`, { ...restData });
-export const getContestById = (data) =>
-  http.get('getContestById', {
-    headers: {
-      contestId: data.contestId,
+// limit, offset, typeIndex, contestId, industry, awardSort, ownEntries,
+export const getActiveContests = ({
+  limit,
+  offset,
+  typeIndex,
+  contestId,
+  industry,
+  awardSort,
+  ownEntries,
+}) =>
+  http.get(`contests`, {
+    params: {
+      limit,
+      offset,
+      typeIndex,
+      contestId,
+      industry,
+      awardSort,
+      ownEntries,
     },
   });
-export const updateContest = (data) => http.post('updateContest', data);
+export const getContestById = (data) => http.get(`contests/${data.contestId}`);
+export const updateContest = (data) =>
+  http.put(`contests/${data.get('contestId')}`, data);
 
 //*CHAT
 export const newMessage = (data) => http.post('chats/newMessage', data);
