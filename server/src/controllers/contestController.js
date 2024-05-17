@@ -18,7 +18,7 @@ module.exports.dataForContest = async (req, res, next) => {
       Boolean
     );
 
-    const characteristics = await db.Selects.findAll({
+    const characteristics = await db.Select.findAll({
       where: {
         type: {
           [db.Sequelize.Op.or]: types,
@@ -48,34 +48,34 @@ module.exports.getContestById = async (req, res, next) => {
       tokenData: { role, userId },
     } = req;
 
-    let contestInfo = await db.Contests.findOne({
+    let contestInfo = await db.Contest.findOne({
       where: { id: contestId },
-      order: [[db.Offers, 'id', 'asc']],
+      order: [[db.Offer, 'id', 'asc']],
       include: [
         {
-          model: db.Users,
+          model: db.User,
           required: true,
           attributes: {
             exclude: ['password', 'role', 'balance', 'accessToken'],
           },
         },
         {
-          model: db.Offers,
+          model: db.Offer,
           required: false,
           where: role === CONSTANTS.CREATOR ? { userId } : {},
           attributes: { exclude: ['userId', 'contestId'] },
           include: [
             {
-              model: db.Users,
+              model: db.User,
               required: true,
               attributes: {
                 exclude: ['password', 'role', 'balance', 'accessToken'],
               },
             },
             {
-              model: db.Ratings,
+              model: db.Rating,
               required: false,
-              where: { userId: req.tokenData.userId },
+              where: { userId },
               attributes: { exclude: ['userId', 'offerId'] },
             },
           ],
@@ -279,7 +279,7 @@ module.exports.getCustomersContests = (req, res, next) => {
     order: [['id', 'DESC']],
     include: [
       {
-        model: db.Offers,
+        model: db.Offer,
         required: false,
         attributes: ['id'],
       },
