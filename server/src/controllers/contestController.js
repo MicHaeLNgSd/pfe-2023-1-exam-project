@@ -272,7 +272,7 @@ module.exports.getCustomersContests = (req, res, next) => {
     query: { limit, offset, status },
   } = req;
 
-  db.Contests.findAll({
+  db.Contest.findAll({
     where: { status, userId },
     limit,
     offset: offset ?? 0,
@@ -311,14 +311,14 @@ module.exports.getContests = (req, res, next) => {
   const isOwnEntries = ownEntries === 'true';
   const data = [typeIndex, contestId, industry, awardSort];
   const { where, order } = UtilFunctions.createWhereForAllContests(...data);
-  db.Contests.findAll({
+  db.Contest.findAll({
     where,
     order,
     limit,
     offset: offset ?? 0,
     include: [
       {
-        model: db.Offers,
+        model: db.Offer,
         required: isOwnEntries,
         where: isOwnEntries ? { userId } : {},
         attributes: ['id'],
