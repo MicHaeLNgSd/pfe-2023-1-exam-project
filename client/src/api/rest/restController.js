@@ -2,35 +2,12 @@ import http from '../interceptor';
 
 //*CONTEST
 export const getCustomersContests = (data) =>
-  http.get(`contests/customers`, {
-    params: {
-      limit: data.limit,
-      offset: data.offset,
-      status: data.contestStatus,
-    },
-  });
+  http.get(`contests/customers`, { params: { ...data } });
 // limit, offset, typeIndex, contestId, industry, awardSort, ownEntries,
-export const getActiveContests = ({
-  limit,
-  offset,
-  typeIndex,
-  contestId,
-  industry,
-  awardSort,
-  ownEntries,
-}) =>
-  http.get(`contests`, {
-    params: {
-      limit,
-      offset,
-      typeIndex,
-      contestId,
-      industry,
-      awardSort,
-      ownEntries,
-    },
-  });
-export const getContestById = (data) => http.get(`contests/${data.contestId}`);
+export const getActiveContests = (data) =>
+  http.get(`contests`, { params: { ...data } });
+export const getContestById = ({ contestId }) =>
+  http.get(`contests/${contestId}`);
 export const updateContest = (data) =>
   http.put(`contests/${data.get('contestId')}`, data);
 
