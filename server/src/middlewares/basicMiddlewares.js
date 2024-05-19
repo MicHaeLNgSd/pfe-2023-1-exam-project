@@ -5,7 +5,7 @@ const ServerError = require('../errors/ServerError');
 const CONSTANTS = require('../constants');
 
 module.exports.parseBody = (req, res, next) => {
-  contests = JSON.parse(req.body.contests);
+  const contests = JSON.parse(req.body.contests);
   contests.forEach((c) => {
     if (c.haveFile) {
       const file = req.files.shift();

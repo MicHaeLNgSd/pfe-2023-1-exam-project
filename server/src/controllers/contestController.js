@@ -5,7 +5,7 @@ const userQueries = require('./queries/userQueries');
 const controller = require('../socketInit');
 const UtilFunctions = require('../utils/functions');
 const CONSTANTS = require('../constants');
-const { query } = require('express');
+// const { query } = require('express');
 
 module.exports.dataForContest = async (req, res, next) => {
   const response = {};
@@ -181,11 +181,11 @@ const resolveOffer = async (
     {
       status: db.sequelize.literal(`CASE
         WHEN "id"=${contestId}  AND "orderId"='${orderId}' THEN '${
-          CONSTANTS.CONTEST_STATUS_FINISHED
-        }'
+        CONSTANTS.CONTEST_STATUS_FINISHED
+      }'
         WHEN "orderId"='${orderId}' AND "priority"=${priority + 1}  THEN '${
-          CONSTANTS.CONTEST_STATUS_ACTIVE
-        }'
+        CONSTANTS.CONTEST_STATUS_ACTIVE
+      }'
         ELSE '${CONSTANTS.CONTEST_STATUS_PENDING}'
         END
     `),
