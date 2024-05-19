@@ -110,13 +110,13 @@ module.exports.downloadFile = async (req, res, next) => {
 module.exports.updateContest = async (req, res, next) => {
   const {
     params: { contestId },
-    file: { filename, originalname },
+    file,
     tokenData: { userId },
   } = req;
 
   if (file) {
-    req.body.filename = filename;
-    req.body.originalname = originalname;
+    req.body.filename = file.filename;
+    req.body.originalname = file.originalname;
   }
 
   try {
@@ -179,15 +179,15 @@ const resolveOffer = async (
 ) => {
   const finishedContest = await contestQueries.updateContestStatus(
     {
-      status: db.sequelize.literal(`   CASE
-            WHEN "id"=${contestId}  AND "orderId"='${orderId}' THEN '${
-        CONSTANTS.CONTEST_STATUS_FINISHED
-      }'
-            WHEN "orderId"='${orderId}' AND "priority"=${priority + 1}  THEN '${
-        CONSTANTS.CONTEST_STATUS_ACTIVE
-      }'
-            ELSE '${CONSTANTS.CONTEST_STATUS_PENDING}'
-            END
+      status: db.sequelize.literal(`CASE
+        WHEN "id"=${contestId}  AND "orderId"='${orderId}' THEN '${
+          CONSTANTS.CONTEST_STATUS_FINISHED
+        }'
+        WHEN "orderId"='${orderId}' AND "priority"=${priority + 1}  THEN '${
+          CONSTANTS.CONTEST_STATUS_ACTIVE
+        }'
+        ELSE '${CONSTANTS.CONTEST_STATUS_PENDING}'
+        END
     `),
     },
     { orderId },

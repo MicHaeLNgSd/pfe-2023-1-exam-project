@@ -132,8 +132,8 @@ module.exports.payment = async (req, res, next) => {
             )}' AND "cvc"='${req.body.cvc}' AND "expiry"='${req.body.expiry}'
                 THEN "balance"-${req.body.price}
             WHEN "cardNumber"='${CONSTANTS.SQUADHELP_BANK_NUMBER}' AND "cvc"='${
-          CONSTANTS.SQUADHELP_BANK_CVC
-        }' AND "expiry"='${CONSTANTS.SQUADHELP_BANK_EXPIRY}'
+              CONSTANTS.SQUADHELP_BANK_CVC
+            }' AND "expiry"='${CONSTANTS.SQUADHELP_BANK_EXPIRY}'
                 THEN "balance"+${req.body.price} END
         `),
       },
@@ -211,14 +211,14 @@ module.exports.cashout = async (req, res, next) => {
                   / /g,
                   ''
                 )}' AND "expiry"='${req.body.expiry}' AND "cvc"='${
-          req.body.cvc
-        }'
+                  req.body.cvc
+                }'
                     THEN "balance"+${req.body.sum}
                 WHEN "cardNumber"='${
                   CONSTANTS.SQUADHELP_BANK_NUMBER
                 }' AND "expiry"='${
-          CONSTANTS.SQUADHELP_BANK_EXPIRY
-        }' AND "cvc"='${CONSTANTS.SQUADHELP_BANK_CVC}'
+                  CONSTANTS.SQUADHELP_BANK_EXPIRY
+                }' AND "cvc"='${CONSTANTS.SQUADHELP_BANK_CVC}'
                     THEN "balance"-${req.body.sum}
                  END
                 `),

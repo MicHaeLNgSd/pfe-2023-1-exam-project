@@ -6,13 +6,19 @@
     "es6": true
   },
   "parserOptions": {
-    "ecmaVersion": 2017,
+    "ecmaVersion": 2020,
     "sourceType": "module"
   },
   "rules": {
     "comma-dangle": [
       "error",
-      "always-multiline"
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never"
+      }
     ],
     "comma-spacing": [
       "error",
@@ -21,51 +27,33 @@
         "after": true
       }
     ],
-    "eol-last": [
-      "error",
-      "always"
-    ],
+    "eol-last": ["error", "always"],
     "indent": [
       "error",
       2,
       {
-        "MemberExpression": 1
+        "SwitchCase": 1,
+        "MemberExpression": 1,
+        "flatTernaryExpressions": true,
+        "ignoredNodes": ["TemplateLiteral"]
       }
     ],
-    "no-multiple-empty-lines": [
-      "error"
-    ],
+    "no-multiple-empty-lines": ["error"],
     "no-new-symbol": "error",
-    "no-trailing-spaces": [
-      "error"
-    ],
-    "no-undef": [
-      "error"
-    ],
+    "no-trailing-spaces": ["error"],
+    "no-undef": ["error"],
     "no-unused-vars": [
-      "warn"
+      "warn",
+      {
+        "args": "none"
+      }
     ],
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
+    "object-curly-spacing": ["error", "always"],
     "object-shorthand": "error",
     "prefer-const": 2,
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "space-in-parens": [
-      "error",
-      "never"
-    ],
-    "strict": [
-      2,
-      "never"
-    ]
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "space-in-parens": ["error", "never"],
+    "strict": [2, "never"]
   }
 }
